@@ -1,0 +1,619 @@
+// financial-form.js
+// Функция открытия модального окна финансовой формы
+function openFinancialForm(formType = 'financial') {
+  var modal = document.getElementById("financialFormModal");
+  var financialFormTitle = document.getElementById("financialFormTitle");
+  var financialFormDescription = document.getElementById("financialFormDescription");
+  var financialSubmitBtn = document.getElementById("financialSubmitBtn");
+  var formTypeInput = document.getElementById("formType");
+
+  if (!modal || !financialFormTitle || !financialFormDescription || !financialSubmitBtn || !formTypeInput) {
+    console.error("Не найдены необходимые элементы DOM:", {
+      modal: !!modal,
+      financialFormTitle: !!financialFormTitle,
+      financialFormDescription: !!financialFormDescription,
+      financialSubmitBtn: !!financialSubmitBtn,
+      formTypeInput: !!formTypeInput
+    });
+    return;
+  }
+
+  let title, description, buttonText;
+  switch (formType) {
+    case 'catalog':
+      title = 'Получить каталог';
+      description = 'Заполните форму, чтобы получить каталог нашего оборудования';
+      buttonText = 'Отправить запрос на каталог';
+      break;
+    case 'request':
+      title = 'Отправить заявку';
+      description = 'Заполните форму, чтобы отправить заявку на проект';
+      buttonText = 'Отправить заявку';
+      break;
+    case 'project_view':
+      title = 'Посмотреть полный проект';
+      description = 'Заполните форму, чтобы получить доступ к полному проекту и дополнительным материалам';
+      buttonText = 'Получить проект';
+      break;
+    case 'financial':
+    default:
+      title = 'Рассчитать финансовую модель';
+      description = 'Заполните форму для получения расчета финансовой модели вашего проекта';
+      buttonText = 'Рассчитать стоимость';
+      break;
+  }
+
+  financialFormTitle.textContent = title;
+  financialFormDescription.textContent = description;
+  financialSubmitBtn.querySelector('.button-text').textContent = buttonText;
+  formTypeInput.value = formType;
+  modal.style.display = "flex";
+  setTimeout(function () {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }, 10);
+}
+
+// Функция открытия формы заказа звонка
+function openPhoneForm() {
+  var modal = document.getElementById("phoneFormModal");
+  if (!modal) {
+    console.error("Элемент с id='phoneFormModal' не найден в DOM");
+    return;
+  }
+  modal.style.display = "flex";
+  setTimeout(function () {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }, 10);
+}
+
+// Функция открытия формы просмотра проекта
+function openProjectViewForm() {
+  var modal = document.getElementById("projectViewFormModal");
+  if (!modal) {
+    console.error("Элемент с id='projectViewFormModal' не найден в DOM");
+    return;
+  }
+  modal.style.display = "flex";
+  setTimeout(function () {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }, 10);
+}
+
+// Функция закрытия модального окна финансовой формы
+function closeFinancialForm() {
+  var modal = document.getElementById("financialFormModal");
+  if (!modal) return;
+  modal.classList.remove("active");
+  setTimeout(function () {
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+  }, 500);
+}
+
+// Функция закрытия формы заказа звонка
+function closePhoneForm() {
+  var modal = document.getElementById("phoneFormModal");
+  if (!modal) return;
+  modal.classList.remove("active");
+  setTimeout(function () {
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+  }, 500);
+}
+
+// Функция закрытия формы просмотра проекта
+function closeProjectViewForm() {
+  var modal = document.getElementById("projectViewFormModal");
+  if (!modal) return;
+  modal.classList.remove("active");
+  setTimeout(function () {
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+  }, 500);
+}
+
+// Функция валидации email
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// Функция валидации телефона
+function isValidPhone(phone) {
+  const digits = phone.replace(/\D/g, "");
+  return digits.length >= 10;
+}
+
+// Функция для показа ошибки
+function showFieldError(field, message) {
+  const wrapper = field.closest(".input-wrapper");
+  let existingError = wrapper.querySelector(".field-error");
+  if (existingError) {
+    existingError.remove();
+  }
+  const errorMsg = document.createElement("div");
+  errorMsg.className = "field-error";
+  errorMsg.textContent = message;
+  wrapper.classList.add("has-error");
+  wrapper.appendChild(errorMsg);
+  wrapper.classList.add("shake");
+  setTimeout(() => {
+    wrapper.classList.remove("shake");
+  }, 500);
+}
+
+// Функция для очистки ошибки
+function clearFieldError(field) {
+  const wrapper = field.closest(".input-wrapper");
+  const errorMsg = wrapper.querySelector(".field-error");
+  if (errorMsg) {
+    errorMsg.remove();
+  }
+  wrapper.classList.remove("has-error");
+}
+
+// Применение маски телефона
+function applyPhoneMask(field) {
+  field.addEventListener("input", function (e) {
+    var x = e.target.value.replace(/\D/g, "").match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+    e.target.value = !x[2] ? x[1] : "+" + x[1] + " (" + x[2] + ") " + (x[3] ? x[3] + "-" + x[4] : "") + (x[5] ? "-" + x[5] : "");
+  });
+}
+
+// Инициализация маски для всех полей телефона
+document.addEventListener("DOMContentLoaded", function () {
+  const phoneInputs = document.querySelectorAll('input[type="tel"]');
+  phoneInputs.forEach(input => {
+    applyPhoneMask(input);
+  });
+});
+
+// Основная форма: financialForm
+const financialForm = document.getElementById("financialForm");
+const phoneForm = document.getElementById("phoneForm");
+const projectViewForm = document.getElementById("projectViewForm");
+
+// ========== 🔐 ДОБАВЛЕНО: reCAPTCHA v3 ==========
+// Замените 'ВАШ_SITE_KEY_ЗДЕСЬ' на ваш реальный ключ из Google reCAPTCHA v3
+const RECAPTCHA_SITE_KEY = '6LePQJUrAAAAAEp6I4K7gwhMoP-HJSv7Sq7VyM4P';
+
+// Динамическая загрузка reCAPTCHA API
+(function () {
+  const script = document.createElement('script');
+  script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
+})();
+// ========== 🔐 КОНЕЦ ДОБАВЛЕНИЯ reCAPTCHA =========
+
+// Обработка формы financialForm
+if (financialForm) {
+  const nameField = document.getElementById("financialName");
+  const emailField = document.getElementById("financialEmail");
+  const phoneField = document.getElementById("financialPhone");
+  const cityField = document.getElementById("financialCity");
+
+  // Валидация email
+  if (emailField) {
+    emailField.addEventListener("blur", function () {
+      if (this.value && !isValidEmail(this.value)) {
+        showFieldError(this, "Пожалуйста, введите корректный email");
+      } else {
+        clearFieldError(this);
+      }
+    });
+    emailField.addEventListener("input", function () {
+      if (this.value && isValidEmail(this.value)) {
+        clearFieldError(this);
+      }
+    });
+  }
+
+  // Валидация телефона
+  if (phoneField) {
+    phoneField.addEventListener("blur", function () {
+      if (this.value && !isValidPhone(this.value)) {
+        showFieldError(this, "Пожалуйста, введите корректный номер телефона");
+      } else {
+        clearFieldError(this);
+      }
+    });
+    applyPhoneMask(phoneField);
+  }
+
+  // Валидация имени и города
+  [nameField, cityField].forEach((field) => {
+    if (field) {
+      field.addEventListener("blur", function () {
+        if (!this.value) {
+          showFieldError(this, "Это поле обязательно для заполнения");
+        } else {
+          clearFieldError(this);
+        }
+      });
+      field.addEventListener("input", function () {
+        if (this.value) {
+          clearFieldError(this);
+        }
+      });
+    }
+  });
+
+  // Отправка формы
+  financialForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    let isFormValid = true;
+
+    if (!nameField.value) {
+      showFieldError(nameField, "Это поле обязательно для заполнения");
+      isFormValid = false;
+    }
+    if (emailField.value && !isValidEmail(emailField.value)) {
+      showFieldError(emailField, "Пожалуйста, введите корректный email");
+      isFormValid = false;
+    }
+    if (!phoneField.value) {
+      showFieldError(phoneField, "Это поле обязательно для заполнения");
+      isFormValid = false;
+    } else if (!isValidPhone(phoneField.value)) {
+      showFieldError(phoneField, "Пожалуйста, введите корректный номер телефона");
+      isFormValid = false;
+    }
+    if (cityField.value && !cityField.value.trim()) {
+      showFieldError(cityField, "Это поле обязательно для заполнения");
+      isFormValid = false;
+    }
+
+    if (!isFormValid) return;
+
+    const submitBtn = this.querySelector(".submit-button");
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="button-text">Отправка...</span>';
+    submitBtn.disabled = true;
+    submitBtn.classList.add("loading");
+
+    // ========== 🔐 ЗАПРАШИВАЕМ ТОКЕН reCAPTCHA ПЕРЕД ОТПРАВКОЙ ==========
+    grecaptcha.ready(function () {
+      grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' }).then(function (token) {
+        const formData = new FormData(financialForm);
+        formData.append("g-recaptcha-response", token); // ✅ токен добавлен
+
+        fetch("send.php", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          submitBtn.innerHTML = originalBtnText;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("loading");
+
+          if (data.success) {
+            closeFinancialForm();
+            const formType = document.getElementById("formType").value;
+            let message;
+            switch (formType) {
+              case 'catalog':
+                message = "Ваш запрос на каталог успешно отправлен!";
+                break;
+              case 'request':
+                message = "Ваша заявка на проект успешно отправлена!";
+                break;
+              case 'project_view':
+                message = "Ваш запрос на просмотр полного проекта успешно отправлен!";
+                break;
+              case 'financial':
+              default:
+                message = "Ваша заявка на расчет финансовой модели успешно отправлена!";
+                break;
+            }
+            showSuccessNotification(message);
+            financialForm.reset();
+          } else {
+            alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+          }
+        })
+        .catch((err) => {
+          submitBtn.innerHTML = originalBtnText;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("loading");
+          alert(`⚠ Произошла ошибка: ${err.message}`);
+          console.error(err);
+        });
+      });
+    });
+    // ========== 🔐 КОНЕЦ reCAPTCHA ==========
+  });
+}
+
+// Обработка формы заказа звонка (phoneForm)
+if (phoneForm) {
+  const nameField = document.getElementById("phoneName");
+  const phoneField = document.getElementById("phonePhone");
+
+  // Валидация имени
+  if (nameField) {
+    nameField.addEventListener("blur", function () {
+      if (!this.value) {
+        showFieldError(this, "Это поле обязательно для заполнения");
+      } else {
+        clearFieldError(this);
+      }
+    });
+    nameField.addEventListener("input", function () {
+      if (this.value) {
+        clearFieldError(this);
+      }
+    });
+  }
+
+  // Валидация телефона
+  if (phoneField) {
+    phoneField.addEventListener("blur", function () {
+      if (this.value && !isValidPhone(this.value)) {
+        showFieldError(this, "Пожалуйста, введите корректный номер телефона");
+      } else {
+        clearFieldError(this);
+      }
+    });
+    applyPhoneMask(phoneField);
+  }
+
+  // Отправка формы
+  phoneForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    let isFormValid = true;
+
+    if (!nameField.value) {
+      showFieldError(nameField, "Это поле обязательно для заполнения");
+      isFormValid = false;
+    }
+    if (!phoneField.value || !isValidPhone(phoneField.value)) {
+      showFieldError(phoneField, "Пожалуйста, введите корректный номер телефона");
+      isFormValid = false;
+    }
+
+    if (!isFormValid) return;
+
+    const submitBtn = this.querySelector(".submit-button");
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="button-text">Отправка...</span>';
+    submitBtn.disabled = true;
+    submitBtn.classList.add("loading");
+
+    // ========== 🔐 reCAPTCHA для phoneForm ==========
+    grecaptcha.ready(function () {
+      grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' }).then(function (token) {
+        const formData = new FormData(phoneForm);
+        formData.append("g-recaptcha-response", token);
+
+        fetch("send.php", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          submitBtn.innerHTML = originalBtnText;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("loading");
+
+          if (data.success) {
+            closePhoneForm();
+            showSuccessNotification("Ваша заявка на обратный звонок успешно отправлена!");
+            phoneForm.reset();
+          } else {
+            alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+          }
+        })
+        .catch((err) => {
+          submitBtn.innerHTML = originalBtnText;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("loading");
+          alert(`⚠ Произошла ошибка: ${err.message}`);
+          console.error(err);
+        });
+      });
+    });
+    // ========== 🔐 КОНЕЦ reCAPTCHA ==========
+  });
+}
+
+// Обработка формы просмотра проекта (projectViewForm)
+if (projectViewForm) {
+  const nameField = document.getElementById("projectViewName");
+  const emailField = document.getElementById("projectViewEmail");
+  const phoneField = document.getElementById("projectViewPhone");
+  const cityField = document.getElementById("projectViewCity");
+
+  // Валидация email
+  if (emailField) {
+    emailField.addEventListener("blur", function () {
+      if (this.value && !isValidEmail(this.value)) {
+        showFieldError(this, "Пожалуйста, введите корректный email");
+      } else {
+        clearFieldError(this);
+      }
+    });
+    emailField.addEventListener("input", function () {
+      if (this.value && isValidEmail(this.value)) {
+        clearFieldError(this);
+      }
+    });
+  }
+
+  // Валидация телефона
+  if (phoneField) {
+    phoneField.addEventListener("blur", function () {
+      if (this.value && !isValidPhone(this.value)) {
+        showFieldError(this, "Пожалуйста, введите корректный номер телефона");
+      } else {
+        clearFieldError(this);
+      }
+    });
+    applyPhoneMask(phoneField);
+  }
+
+  // Валидация имени и города
+  [nameField, cityField].forEach((field) => {
+    if (field) {
+      field.addEventListener("blur", function () {
+        if (!this.value) {
+          showFieldError(this, "Это поле обязательно для заполнения");
+        } else {
+          clearFieldError(this);
+        }
+      });
+      field.addEventListener("input", function () {
+        if (this.value) {
+          clearFieldError(this);
+        }
+      });
+    }
+  });
+
+  // Отправка формы
+  projectViewForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    let isFormValid = true;
+
+    if (!nameField.value) {
+      showFieldError(nameField, "Это поле обязательно для заполнения");
+      isFormValid = false;
+    }
+    if (!phoneField.value || !isValidPhone(phoneField.value)) {
+      showFieldError(phoneField, "Пожалуйста, введите корректный номер телефона");
+      isFormValid = false;
+    }
+    if (emailField.value && !isValidEmail(emailField.value)) {
+      showFieldError(emailField, "Пожалуйста, введите корректный email");
+      isFormValid = false;
+    }
+    if (cityField.value && !cityField.value.trim()) {
+      showFieldError(cityField, "Это поле обязательно для заполнения");
+      isFormValid = false;
+    }
+
+    if (!isFormValid) return;
+
+    const submitBtn = this.querySelector(".submit-button");
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="button-text">Отправка...</span>';
+    submitBtn.disabled = true;
+    submitBtn.classList.add("loading");
+
+    // ========== 🔐 reCAPTCHA для projectViewForm ==========
+    grecaptcha.ready(function () {
+      grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' }).then(function (token) {
+        const formData = new FormData(projectViewForm);
+        formData.append("g-recaptcha-response", token);
+
+        fetch("send.php", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          submitBtn.innerHTML = originalBtnText;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("loading");
+
+          if (data.success) {
+            closeProjectViewForm();
+            showSuccessNotification("Ваш запрос на просмотр полного проекта успешно отправлен!");
+            projectViewForm.reset();
+          } else {
+            alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+          }
+        })
+        .catch((err) => {
+          submitBtn.innerHTML = originalBtnText;
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("loading");
+          alert(`⚠ Произошла ошибка: ${err.message}`);
+          console.error(err);
+        });
+      });
+    });
+    // ========== 🔐 КОНЕЦ reCAPTCHA ==========
+  });
+}
+
+// Функция для показа уведомления об успехе
+function showSuccessNotification(message) {
+  let successNotification = document.createElement("div");
+  successNotification.className = "success-notification financial-success";
+  successNotification.innerHTML = `<div class="success-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg></div><div class="success-message"><h3>Спасибо!</h3><p>${message}</p></div>`;
+  document.body.appendChild(successNotification);
+  setTimeout(() => successNotification.classList.add("show"), 100);
+  setTimeout(() => {
+    successNotification.classList.remove("show");
+    setTimeout(() => successNotification.remove(), 500);
+  }, 5000);
+}
+
+// Добавление стилей
+function addStyles() {
+  const styleTag = document.createElement("style");
+  styleTag.textContent = `.input-wrapper.has-error {border-color: rgba(255, 66, 66, 0.5) !important;box-shadow: 0 8px 20px rgba(255, 66, 66, 0.15) !important;}.field-error {color: #ff4242;font-size: 12px;margin-top: 5px;font-weight: 500;padding-left: 15px;opacity: 0;animation: fadeInError 0.3s ease forwards;}@keyframes fadeInError {from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateX(0); }}.input-wrapper.shake {animation: shake 0.5s ease-in-out;}@keyframes shake {0%, 100% {transform: translateX(0);}25% {transform: translateX(-5px);}75% {transform: translateX(5px);}}.success-notification {position: fixed;bottom: 30px;right: 30px;max-width: 400px;background: white;border-radius: 12px;padding: 16px 20px;box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);display: flex;align-items: center;gap: 12px;transform: translateX(100%);transition: transform 0.4s ease;opacity: 0;z-index: 1000;}.success-notification.show {transform: translateX(0);opacity: 1;}.success-icon {background: rgba(255, 255, 255, 0.2);width: 40px;height: 40px;border-radius: 50%;display: flex;align-items: center;justify-content: center;flex-shrink: 0;}.success-message h3 {margin: 0 0 5px 0;font-size: 18px;}.success-message p {margin: 0;font-size: 14px;opacity: 0.9;}@media (max-width: 600px) {.success-notification {bottom: 20px;right: 20px;left: 20px;max-width: none;}}`;
+  document.head.appendChild(styleTag);
+}
+addStyles();
+
+// Инициализация после загрузки DOM
+document.addEventListener("DOMContentLoaded", function () {
+  const financialModal = document.getElementById("financialFormModal");
+  const phoneModal = document.getElementById("phoneFormModal");
+  const projectViewModal = document.getElementById("projectViewFormModal");
+
+  const requestButton = document.getElementById("requestButton");
+  if (requestButton) {
+    requestButton.addEventListener("click", () => openFinancialForm('request'));
+  } else {
+    console.warn("Кнопка с id='requestButton' не найдена в DOM");
+  }
+
+  // Закрытие по клику вне контента
+  if (financialModal) {
+    financialModal.addEventListener("click", function (event) {
+      if (event.target === financialModal) {
+        closeFinancialForm();
+      }
+    });
+  }
+  if (phoneModal) {
+    phoneModal.addEventListener("click", function (event) {
+      if (event.target === phoneModal) {
+        closePhoneForm();
+      }
+    });
+  }
+  if (projectViewModal) {
+    projectViewModal.addEventListener("click", function (event) {
+      if (event.target === projectViewModal) {
+        closeProjectViewForm();
+      }
+    });
+  }
+
+  // Закрытие по клавише Escape
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      if (financialModal && financialModal.classList.contains("active")) {
+        closeFinancialForm();
+      }
+      if (phoneModal && phoneModal.classList.contains("active")) {
+        closePhoneForm();
+      }
+      if (projectViewModal && projectViewModal.classList.contains("active")) {
+        closeProjectViewForm();
+      }
+    }
+  });
+});

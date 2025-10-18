@@ -1,0 +1,671 @@
+/* Стили модального окна для финансовой формы */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+    display: none;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    transition: all 0.5s cubic-bezier(0, 0, 0.2, 1);
+}
+
+#financialFormModal.active {
+    display: flex;
+    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.financial-form-container {
+    position: relative;
+    background: linear-gradient(135deg, #fffef9 0%, #fff7e6 100%);
+    width: 550px;
+    max-width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 15px 60px rgba(0, 0, 0, 0.25), 0 0 30px rgba(255, 204, 0, 0.2);
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 204, 0, 0.3);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 204, 0, 0.5) rgba(0, 0, 0, 0.1);
+}
+
+.financial-form-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.financial-form-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.financial-form-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 204, 0, 0.5);
+    border-radius: 10px;
+}
+
+.financial-form-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 204, 0, 0.7);
+}
+
+#financialFormModal.active .financial-form-container {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.financial-form-title {
+    color: var(--primary-color);
+    font-size: 32px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 15px;
+    position: relative;
+    padding-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(45deg, var(--bright-yellow), #ffa500, var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(255, 204, 0, 0.3);
+    animation: gradientTextShift 3s ease infinite;
+}
+
+.financial-form-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(45deg, var(--bright-yellow), #ffa500, var(--primary-color));
+    border-radius: 50px;
+    animation: goldGradientShift 3s ease infinite;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+@keyframes gradientTextShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes goldGradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.financial-form-description {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #666;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.financial-form-description p {
+    line-height: 1.6;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.financial-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* Стили полей ввода */
+.financial-form .input-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 204, 0, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.financial-form .input-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    z-index: -1;
+    background: linear-gradient(45deg, var(--bright-yellow), #ffa500, var(--primary-color));
+    border-radius: 18px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.financial-form .input-wrapper:focus-within::before {
+    opacity: 0.4;
+}
+
+.financial-form .input-focus-effect {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--bright-yellow), #ffa500, var(--primary-color));
+    background-size: 200% auto;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    opacity: 0;
+    border-radius: 0 0 16px 16px;
+}
+
+.financial-form .input-wrapper:focus-within .input-focus-effect {
+    width: 100%;
+    opacity: 1;
+    animation: goldGradientFlow 2s linear infinite;
+}
+
+@keyframes goldGradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.financial-form .input-wrapper:focus-within {
+    box-shadow: 0 15px 35px rgba(255, 204, 0, 0.25);
+    transform: translateY(-5px);
+    border-color: rgba(255, 204, 0, 0.5);
+    background: rgba(255, 255, 255, 1);
+}
+
+.financial-form .input-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    opacity: 0.8;
+    transition: all 0.4s ease;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.financial-form .input-wrapper:focus-within .input-icon {
+    color: var(--bright-yellow);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+    filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.5));
+}
+
+.financial-form .textarea-wrapper .input-icon {
+    top: 25px;
+    transform: none;
+}
+
+.financial-form .textarea-wrapper:focus-within .input-icon {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.5));
+}
+
+.financial-form input, 
+.financial-form select,
+.financial-form textarea {
+    width: 100%;
+    padding: 18px 20px 18px 56px;
+    border: none;
+    background: transparent;
+    color: #444;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.4s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.financial-form select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffcc00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 16px;
+    padding-right: 45px;
+}
+
+.financial-form textarea {
+    min-height: 140px;
+    resize: vertical;
+    padding-top: 22px;
+    line-height: 1.6;
+}
+
+.financial-form input:focus, 
+.financial-form select:focus,
+.financial-form textarea:focus {
+    outline: none;
+}
+
+.financial-form input::placeholder,
+.financial-form textarea::placeholder,
+.financial-form select:invalid {
+    color: #999;
+    font-weight: 400;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.financial-form input:focus::placeholder,
+.financial-form textarea:focus::placeholder {
+    opacity: 0;
+}
+
+.financial-form label {
+    position: absolute;
+    left: 56px;
+    top: 18px;
+    color: var(--primary-color);
+    font-size: 14px;
+    font-weight: 600;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0;
+    transform: translateY(-24px);
+    text-shadow: 0 1px 2px rgba(255, 204, 0, 0.2);
+}
+
+.financial-form input:focus + label,
+.financial-form select:focus + label,
+.financial-form textarea:focus + label,
+.financial-form input:not(:placeholder-shown) + label,
+.financial-form select:not([value=""]):not([value="undefined"]) + label,
+.financial-form textarea:not(:placeholder-shown) + label {
+    opacity: 1;
+    transform: translateY(-50px);
+    color: var(--bright-yellow);
+}
+
+.financial-form .form-submit {
+    margin-top: 20px;
+}
+
+.financial-form .submit-button {
+    width: 100%;
+    padding: 20px 34px;
+    background: linear-gradient(45deg, var(--bright-yellow), #ffa500, var(--primary-color));
+    background-size: 200% auto;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(255, 204, 0, 0.4);
+    z-index: 1;
+    animation: goldGradientMove 3s ease infinite;
+}
+
+@keyframes goldGradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.financial-form .submit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    transition: 0.8s ease;
+    z-index: -1;
+}
+
+.financial-form .submit-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #ffa500, var(--bright-yellow));
+    background-size: 200% auto;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: -2;
+    border-radius: 50px;
+}
+
+.financial-form .submit-button:hover {
+    transform: translateY(-7px) scale(1.03);
+    box-shadow: 0 20px 40px rgba(255, 204, 0, 0.5), 0 0 20px rgba(255, 204, 0, 0.3);
+    letter-spacing: 3px;
+}
+
+.financial-form .submit-button:hover::before {
+    left: 100%;
+}
+
+.financial-form .submit-button:hover::after {
+    opacity: 1;
+}
+
+.financial-form .button-text {
+    position: relative;
+    z-index: 2;
+    transition: all 0.4s ease;
+}
+
+.financial-form .button-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 2;
+}
+
+.financial-form .submit-button:hover .button-icon {
+    transform: translateX(10px) scale(1.2);
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+}
+
+.financial-form .submit-button:active {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 204, 0, 0.4);
+}
+
+.financial-form-container .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    color: var(--dark-purple);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.financial-form-container .modal-close:hover {
+    background: rgba(155, 89, 182, 0.15);
+    transform: rotate(90deg) scale(1.1);
+}
+
+.financial-form-container .modal-close svg {
+    fill: var(--dark-purple);
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
+}
+
+.financial-form-container .modal-close:hover svg {
+    fill: var(--secondary-color);
+}
+
+.financial-form-container .modal-close .close-text {
+    color: var(--dark-purple);
+    font-weight: 700;
+    opacity: 0.85;
+    transition: color 0.3s;
+}
+
+.financial-form-container .modal-close:hover .close-text {
+    color: var(--secondary-color);
+    opacity: 1;
+}
+
+.toggle-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+}
+
+.toggle-option {
+    flex: 1;
+    min-width: 100px;
+}
+
+.toggle-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-option label {
+    display: block;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 14px 10px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 204, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.toggle-option label:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-option input[type="radio"]:checked + label {
+    background: linear-gradient(45deg, var(--bright-yellow), #ffa500);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+    transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+    #financialFormModal {
+        padding: 20px;
+    }
+    
+    .financial-form-container {
+        padding: 30px 20px;
+        max-height: 85vh;
+    }
+    
+    .financial-form-title {
+        font-size: 24px;
+    }
+    
+    .financial-form .form-group {
+        gap: 20px;
+    }
+    
+    .financial-form input, 
+    .financial-form select, 
+    .financial-form textarea {
+        font-size: 14px;
+        padding: 15px 20px 15px 50px;
+    }
+    
+    .toggle-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .financial-form-container .modal-close {
+        top: 15px;
+        right: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .financial-form-container {
+        padding: 25px 15px;
+    }
+    
+    .financial-form-title {
+        font-size: 22px;
+    }
+    
+    .financial-form-description p {
+        font-size: 14px;
+    }
+    
+    .financial-form .submit-button {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+}
+
+/* Улучшенные стили для переключателей */
+.toggle-group.improved {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.toggle-group.improved .toggle-option {
+    flex: 1;
+    min-width: 120px;
+}
+
+.toggle-group.improved .toggle-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-group.improved .toggle-option label {
+    display: block;
+    text-align: center;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #555;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(255, 204, 0, 0.2);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-group.improved .toggle-option label::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--bright-yellow), #ffa500, var(--primary-color));
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.toggle-group.improved .toggle-option input[type="radio"]:checked + label {
+    color: white;
+    border-color: rgba(255, 204, 0, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+}
+
+.toggle-group.improved .toggle-option input[type="radio"]:checked + label::before {
+    left: 0;
+}
+
+.toggle-group.improved .toggle-option label:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 1);
+}
+
+.toggle-group.improved .toggle-option input[type="radio"]:focus + label {
+    box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.static-label {
+    position: static !important;
+    opacity: 1 !important;
+    transform: none !important;
+    margin-bottom: 10px !important;
+    display: block !important;
+    color: #666 !important;
+    font-weight: 600 !important;
+}
+
+/* Валидация полей ввода */
+.financial-form input:invalid:focus,
+.financial-form select:invalid:focus,
+.financial-form textarea:invalid:focus {
+    border-color: rgba(255, 87, 87, 0.5);
+    box-shadow: 0 5px 15px rgba(255, 87, 87, 0.2);
+}
+
+.financial-form input:valid:focus,
+.financial-form select:valid:focus,
+.financial-form textarea:valid:focus {
+    border-color: rgba(87, 255, 87, 0.5);
+    box-shadow: 0 5px 15px rgba(87, 255, 87, 0.2);
+}
+
+.field-error {
+    color: #ff5757;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding-left: 5px;
+    animation: shakeError 0.5s ease;
+}
+
+@keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.has-error .input-wrapper {
+    border-color: rgba(255, 87, 87, 0.5);
+    box-shadow: 0 5px 15px rgba(255, 87, 87, 0.2);
+}
+
+.shake {
+    animation: shakeError 0.5s ease;
+}
