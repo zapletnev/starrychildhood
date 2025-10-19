@@ -268,46 +268,55 @@ if (financialForm) {
     // Submit form directly without reCAPTCHA token (server may still validate server-side)
     (function () {
       const formData = new FormData(financialForm);
+      const url = (financialForm && financialForm.getAttribute('action')) ? financialForm.getAttribute('action') : 'send.php';
 
-      fetch("send.php", {
-        method: "POST",
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json, text/html'
+        },
         body: formData
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(response => {
+        // If the response is JSON, parse it, otherwise treat any 2xx as success (Formspree returns HTML)
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.indexOf('application/json') !== -1) return response.json().then(data => ({ ok: response.ok, data }));
+        return { ok: response.ok, data: null };
+      })
+      .then(({ ok, data }) => {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
-        submitBtn.classList.remove("loading");
+        submitBtn.classList.remove('loading');
 
-        if (data.success) {
+        if (ok) {
           closeFinancialForm();
-          const formType = document.getElementById("formType").value;
+          const formType = document.getElementById('formType') ? document.getElementById('formType').value : 'financial';
           let message;
           switch (formType) {
             case 'catalog':
-              message = "Ваш запрос на каталог успешно отправлен!";
+              message = 'Ваш запрос на каталог успешно отправлен!';
               break;
             case 'request':
-              message = "Ваша заявка на проект успешно отправлена!";
+              message = 'Ваша заявка на проект успешно отправлена!';
               break;
             case 'project_view':
-              message = "Ваш запрос на просмотр полного проекта успешно отправлен!";
+              message = 'Ваш запрос на просмотр полного проекта успешно отправлен!';
               break;
             case 'financial':
             default:
-              message = "Ваша заявка на расчет финансовой модели успешно отправлена!";
+              message = 'Ваша заявка на расчет финансовой модели успешно отправлена!';
               break;
           }
           showSuccessNotification(message);
           financialForm.reset();
         } else {
-          alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+          alert('❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.');
         }
       })
       .catch((err) => {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
-        submitBtn.classList.remove("loading");
+        submitBtn.classList.remove('loading');
         alert(`⚠ Произошла ошибка: ${err.message}`);
         console.error(err);
       });
@@ -374,29 +383,35 @@ if (phoneForm) {
     // Submit phone form directly without reCAPTCHA token
     (function () {
       const formData = new FormData(phoneForm);
+      const url = (phoneForm && phoneForm.getAttribute('action')) ? phoneForm.getAttribute('action') : 'send.php';
 
-      fetch("send.php", {
-        method: "POST",
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json, text/html' },
         body: formData
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(response => {
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.indexOf('application/json') !== -1) return response.json().then(data => ({ ok: response.ok, data }));
+        return { ok: response.ok, data: null };
+      })
+      .then(({ ok, data }) => {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
-        submitBtn.classList.remove("loading");
+        submitBtn.classList.remove('loading');
 
-        if (data.success) {
+        if (ok) {
           closePhoneForm();
-          showSuccessNotification("Ваша заявка на обратный звонок успешно отправлена!");
+          showSuccessNotification('Ваша заявка на обратный звонок успешно отправлена!');
           phoneForm.reset();
         } else {
-          alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+          alert('❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.');
         }
       })
       .catch((err) => {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
-        submitBtn.classList.remove("loading");
+        submitBtn.classList.remove('loading');
         alert(`⚠ Произошла ошибка: ${err.message}`);
         console.error(err);
       });
@@ -491,29 +506,35 @@ if (projectViewForm) {
     // Submit project view form directly without reCAPTCHA token
     (function () {
       const formData = new FormData(projectViewForm);
+      const url = (projectViewForm && projectViewForm.getAttribute('action')) ? projectViewForm.getAttribute('action') : 'send.php';
 
-      fetch("send.php", {
-        method: "POST",
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json, text/html' },
         body: formData
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(response => {
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.indexOf('application/json') !== -1) return response.json().then(data => ({ ok: response.ok, data }));
+        return { ok: response.ok, data: null };
+      })
+      .then(({ ok, data }) => {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
-        submitBtn.classList.remove("loading");
+        submitBtn.classList.remove('loading');
 
-        if (data.success) {
+        if (ok) {
           closeProjectViewForm();
-          showSuccessNotification("Ваш запрос на просмотр полного проекта успешно отправлен!");
+          showSuccessNotification('Ваш запрос на просмотр полного проекта успешно отправлен!');
           projectViewForm.reset();
         } else {
-          alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+          alert('❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.');
         }
       })
       .catch((err) => {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
-        submitBtn.classList.remove("loading");
+        submitBtn.classList.remove('loading');
         alert(`⚠ Произошла ошибка: ${err.message}`);
         console.error(err);
       });
