@@ -176,19 +176,7 @@ const financialForm = document.getElementById("financialForm");
 const phoneForm = document.getElementById("phoneForm");
 const projectViewForm = document.getElementById("projectViewForm");
 
-// ========== 🔐 ДОБАВЛЕНО: reCAPTCHA v3 ==========
-// Замените 'ВАШ_SITE_KEY_ЗДЕСЬ' на ваш реальный ключ из Google reCAPTCHA v3
-const RECAPTCHA_SITE_KEY = '6LePQJUrAAAAAEp6I4K7gwhMoP-HJSv7Sq7VyM4P';
-
-// Динамическая загрузка reCAPTCHA API
-(function () {
-  const script = document.createElement('script');
-  script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
-  script.async = true;
-  script.defer = true;
-  document.head.appendChild(script);
-})();
-// ========== 🔐 КОНЕЦ ДОБАВЛЕНИЯ reCAPTCHA =========
+// reCAPTCHA removed: forms will post directly without requesting a grecaptcha token
 
 // Обработка формы financialForm
 if (financialForm) {
@@ -277,57 +265,53 @@ if (financialForm) {
     submitBtn.disabled = true;
     submitBtn.classList.add("loading");
 
-    // ========== 🔐 ЗАПРАШИВАЕМ ТОКЕН reCAPTCHA ПЕРЕД ОТПРАВКОЙ ==========
-    grecaptcha.ready(function () {
-      grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' }).then(function (token) {
-        const formData = new FormData(financialForm);
-        formData.append("g-recaptcha-response", token); // ✅ токен добавлен
+    // Submit form directly without reCAPTCHA token (server may still validate server-side)
+    (function () {
+      const formData = new FormData(financialForm);
 
-        fetch("send.php", {
-          method: "POST",
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          submitBtn.innerHTML = originalBtnText;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("loading");
+      fetch("send.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("loading");
 
-          if (data.success) {
-            closeFinancialForm();
-            const formType = document.getElementById("formType").value;
-            let message;
-            switch (formType) {
-              case 'catalog':
-                message = "Ваш запрос на каталог успешно отправлен!";
-                break;
-              case 'request':
-                message = "Ваша заявка на проект успешно отправлена!";
-                break;
-              case 'project_view':
-                message = "Ваш запрос на просмотр полного проекта успешно отправлен!";
-                break;
-              case 'financial':
-              default:
-                message = "Ваша заявка на расчет финансовой модели успешно отправлена!";
-                break;
-            }
-            showSuccessNotification(message);
-            financialForm.reset();
-          } else {
-            alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+        if (data.success) {
+          closeFinancialForm();
+          const formType = document.getElementById("formType").value;
+          let message;
+          switch (formType) {
+            case 'catalog':
+              message = "Ваш запрос на каталог успешно отправлен!";
+              break;
+            case 'request':
+              message = "Ваша заявка на проект успешно отправлена!";
+              break;
+            case 'project_view':
+              message = "Ваш запрос на просмотр полного проекта успешно отправлен!";
+              break;
+            case 'financial':
+            default:
+              message = "Ваша заявка на расчет финансовой модели успешно отправлена!";
+              break;
           }
-        })
-        .catch((err) => {
-          submitBtn.innerHTML = originalBtnText;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("loading");
-          alert(`⚠ Произошла ошибка: ${err.message}`);
-          console.error(err);
-        });
+          showSuccessNotification(message);
+          financialForm.reset();
+        } else {
+          alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+        }
+      })
+      .catch((err) => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("loading");
+        alert(`⚠ Произошла ошибка: ${err.message}`);
+        console.error(err);
       });
-    });
-    // ========== 🔐 КОНЕЦ reCAPTCHA ==========
+    })();
   });
 }
 
@@ -387,40 +371,36 @@ if (phoneForm) {
     submitBtn.disabled = true;
     submitBtn.classList.add("loading");
 
-    // ========== 🔐 reCAPTCHA для phoneForm ==========
-    grecaptcha.ready(function () {
-      grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' }).then(function (token) {
-        const formData = new FormData(phoneForm);
-        formData.append("g-recaptcha-response", token);
+    // Submit phone form directly without reCAPTCHA token
+    (function () {
+      const formData = new FormData(phoneForm);
 
-        fetch("send.php", {
-          method: "POST",
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          submitBtn.innerHTML = originalBtnText;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("loading");
+      fetch("send.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("loading");
 
-          if (data.success) {
-            closePhoneForm();
-            showSuccessNotification("Ваша заявка на обратный звонок успешно отправлена!");
-            phoneForm.reset();
-          } else {
-            alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
-          }
-        })
-        .catch((err) => {
-          submitBtn.innerHTML = originalBtnText;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("loading");
-          alert(`⚠ Произошла ошибка: ${err.message}`);
-          console.error(err);
-        });
+        if (data.success) {
+          closePhoneForm();
+          showSuccessNotification("Ваша заявка на обратный звонок успешно отправлена!");
+          phoneForm.reset();
+        } else {
+          alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+        }
+      })
+      .catch((err) => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("loading");
+        alert(`⚠ Произошла ошибка: ${err.message}`);
+        console.error(err);
       });
-    });
-    // ========== 🔐 КОНЕЦ reCAPTCHA ==========
+    })();
   });
 }
 
@@ -508,40 +488,36 @@ if (projectViewForm) {
     submitBtn.disabled = true;
     submitBtn.classList.add("loading");
 
-    // ========== 🔐 reCAPTCHA для projectViewForm ==========
-    grecaptcha.ready(function () {
-      grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit_form' }).then(function (token) {
-        const formData = new FormData(projectViewForm);
-        formData.append("g-recaptcha-response", token);
+    // Submit project view form directly without reCAPTCHA token
+    (function () {
+      const formData = new FormData(projectViewForm);
 
-        fetch("send.php", {
-          method: "POST",
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          submitBtn.innerHTML = originalBtnText;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("loading");
+      fetch("send.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("loading");
 
-          if (data.success) {
-            closeProjectViewForm();
-            showSuccessNotification("Ваш запрос на просмотр полного проекта успешно отправлен!");
-            projectViewForm.reset();
-          } else {
-            alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
-          }
-        })
-        .catch((err) => {
-          submitBtn.innerHTML = originalBtnText;
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("loading");
-          alert(`⚠ Произошла ошибка: ${err.message}`);
-          console.error(err);
-        });
+        if (data.success) {
+          closeProjectViewForm();
+          showSuccessNotification("Ваш запрос на просмотр полного проекта успешно отправлен!");
+          projectViewForm.reset();
+        } else {
+          alert("❌ Ошибка при отправке. Проверьте настройки сервера или попробуйте позже.");
+        }
+      })
+      .catch((err) => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("loading");
+        alert(`⚠ Произошла ошибка: ${err.message}`);
+        console.error(err);
       });
-    });
-    // ========== 🔐 КОНЕЦ reCAPTCHA ==========
+    })();
   });
 }
 
